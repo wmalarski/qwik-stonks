@@ -3,7 +3,7 @@ import { useServerTimeLoader } from "~/routes/layout";
 import { css } from "~/styled-system/css";
 import styles from "./footer.module.css";
 
-export default component$(() => {
+export const Footer = component$(() => {
   const serverTime = useServerTimeLoader();
 
   return (

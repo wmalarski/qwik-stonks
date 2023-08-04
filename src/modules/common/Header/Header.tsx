@@ -1,8 +1,8 @@
 import { component$ } from "@builder.io/qwik";
-import { QwikLogo } from "../icons/qwik";
+import { QwikLogo } from "~/components/icons/QwikLogo";
 import styles from "./header.module.css";
 
-export default component$(() => {
+export const Header = component$(() => {
   return (
     <header class={styles.header}>
       <div class={["container", styles.wrapper]}>
