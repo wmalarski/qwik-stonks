@@ -1,26 +1,30 @@
 import { component$ } from "@builder.io/qwik";
 import { useServerTimeLoader } from "~/routes/layout";
 import { css } from "~/styled-system/css";
-import styles from "./footer.module.css";
 
 export const Footer = component$(() => {
   const serverTime = useServerTimeLoader();
 
   return (
-    <footer
-      class={css({
-        padding: 10,
-        bg: "red.400",
-        height: "dvh",
-        margin: 100,
-        fontSize: 30,
-      })}
-    >
+    <footer>
       <div class="container">
-        <a href="https://www.builder.io/" target="_blank" class={styles.anchor}>
-          <span>Made with ♡ by Builder.io</span>
-          <span class={styles.spacer}>|</span>
-          <span>{serverTime.value.date}</span>
+        <a
+          href="https://www.builder.io/"
+          target="_blank"
+          class={css({
+            color: "white",
+            display: "block",
+            fontSize: "small",
+            textAlign: "center",
+            textDecoration: "none",
+            lineHeight: "normal",
+          })}
+        >
+          <span class={css({ display: "block" })}>
+            Made with ♡ by Builder.io
+          </span>
+          <span class={css({ display: "none", paddingX: "4" })}>|</span>
+          <span class={css({ display: "block" })}>{serverTime.value.date}</span>
         </a>
       </div>
     </footer>
