@@ -7,7 +7,17 @@ export const Footer = component$(() => {
 
   return (
     <footer>
-      <div class="container">
+      <div
+        class={css({
+          marginX: "auto",
+          paddingY: "12",
+          paddingX: "20",
+          smDown: {
+            paddingY: "8",
+            paddingX: "10",
+          },
+        })}
+      >
         <a
           href="https://www.builder.io/"
           target="_blank"
