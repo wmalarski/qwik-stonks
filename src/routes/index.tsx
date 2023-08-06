@@ -11,6 +11,7 @@ export default component$(() => {
           domain: import.meta.env.PUBLIC_AUTH0_DOMAIN,
           clientID: import.meta.env.PUBLIC_AUTH0_CLIENT_ID,
           redirectUri: import.meta.env.PUBLIC_AUTH0_REDIRECT_URL,
+          responseType: "code",
         });
 
         webAuth.authorize({ connection: "google-oauth2" });
