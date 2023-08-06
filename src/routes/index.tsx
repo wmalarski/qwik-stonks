@@ -1,10 +1,11 @@
 import { component$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import auth0 from "auth0-js";
+import { Button } from "~/components/Button";
 
 export default component$(() => {
   return (
-    <button
+    <Button
       onClick$={() => {
         const webAuth = new auth0.WebAuth({
           domain: import.meta.env.PUBLIC_AUTH0_DOMAIN,
@@ -16,7 +17,7 @@ export default component$(() => {
       }}
     >
       Sign In
-    </button>
+    </Button>
   );
 });
 
