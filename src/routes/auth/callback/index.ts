@@ -1,5 +1,6 @@
 import { type RequestHandler } from "@builder.io/qwik-city";
-import { getAuthToken, getAuthTokenSchema } from "~/server/auth";
+import { createCookieSession } from "~/server/auth";
+import { getAuthTokenSchema, getOAuthSession } from "~/server/oauth";
 
 export const onGet: RequestHandler = async (event) => {
   console.log("event", event.env);
@@ -8,9 +9,9 @@ export const onGet: RequestHandler = async (event) => {
     Object.fromEntries(event.query.entries()),
   );
 
-  const response = await getAuthToken({ ...parsed, event });
+  const session = await getOAuthSession({ ...parsed, event });
 
-  console.log("response", response);
+  createCookieSession(event, session);
 
   throw event.redirect(302, "/");
 };
