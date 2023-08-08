@@ -1,5 +1,6 @@
 import type { RequestEventCommon } from "@builder.io/qwik-city";
 import { Client } from "@notionhq/client";
+import type { QueryDatabaseParameters } from "@notionhq/client/build/src/api-endpoints";
 import { getServerEnv } from "./env";
 
 const NOTION_CACHE_KEY = "__notion";
@@ -12,6 +13,7 @@ const getNotionClient = (event: RequestEventCommon): Client => {
   }
 
   const env = getServerEnv(event);
+
   const notion = new Client({ auth: env.notionKey });
 
   event.sharedMap.set(NOTION_CACHE_KEY, notion);
@@ -19,10 +21,29 @@ const getNotionClient = (event: RequestEventCommon): Client => {
   return notion;
 };
 
-export const getNotionUsers = async (event: RequestEventCommon) => {
+export const getNotionUser = (event: RequestEventCommon) => {
   const notion = getNotionClient(event);
 
-  const listUsersResponse = await notion.users.list({});
+  return notion.users.me({});
+};
 
-  return listUsersResponse;
+export const getNotionDatabase = (event: RequestEventCommon) => {
+  const env = getServerEnv(event);
+  const notion = getNotionClient(event);
+
+  return notion.databases.retrieve({ database_id: env.notionDatabase });
+};
+
+type QueryNotionDatabaseArgs = Omit<QueryDatabaseParameters, "database_id"> & {
+  event: RequestEventCommon;
+};
+
+export const queryNotionDatabase = ({
+  event,
+  ...args
+}: QueryNotionDatabaseArgs) => {
+  const env = getServerEnv(event);
+  const notion = getNotionClient(event);
+
+  return notion.databases.query({ database_id: env.notionDatabase, ...args });
 };
