@@ -1,5 +1,5 @@
 import { type RequestHandler } from "@builder.io/qwik-city";
-import { createCookieSession } from "~/server/auth";
+import { getNotionUsers } from "~/server/notion";
 import { getAuthTokenSchema, getOAuthSession } from "~/server/oauth";
 
 export const onGet: RequestHandler = async (event) => {
@@ -11,7 +11,11 @@ export const onGet: RequestHandler = async (event) => {
 
   const session = await getOAuthSession({ ...parsed, event });
 
-  createCookieSession(event, session);
+  const users = await getNotionUsers(event);
+
+  // createCookieSession(event, session);
+
+  console.log({ users, session });
 
   throw event.redirect(302, "/");
 };
