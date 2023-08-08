@@ -1,24 +1,29 @@
-import { type RequestHandler } from "@builder.io/qwik-city";
+import { z, type RequestHandler } from "@builder.io/qwik-city";
 import { createCookieSession } from "~/server/auth";
-import { getNotionDatabase, getNotionUser } from "~/server/notion";
-import { getAuthTokenSchema, getOAuthSession } from "~/server/oauth";
+import { getNotionUsers } from "~/server/notion";
+import { exchangeAuthToken, getAuthUserInfo } from "~/server/oauth";
 import { paths } from "~/utils/paths";
 
 export const onGet: RequestHandler = async (event) => {
-  console.log("event", event.env);
+  const schema = z.object({ code: z.string(), state: z.string() });
 
-  const parsed = await getAuthTokenSchema().parseAsync(
+  const parsed = await schema.parseAsync(
     Object.fromEntries(event.query.entries()),
   );
 
-  const session = await getOAuthSession({ ...parsed, event });
+  const session = await exchangeAuthToken({ ...parsed, event });
+  const user = await getAuthUserInfo({ event, session });
 
-  console.log({ session });
+  const users = await getNotionUsers(event);
 
-  const user = await getNotionUser(event);
-  const database = await getNotionDatabase(event);
+  const hasAccess = users.results.some(
+    (notionUser) =>
+      notionUser.type === "person" && notionUser.person.email === user.email,
+  );
 
-  console.log({ user, database });
+  if (!hasAccess) {
+    throw event.redirect(302, paths.home);
+  }
 
   createCookieSession(event, session);
 

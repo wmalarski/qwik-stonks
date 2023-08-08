@@ -21,10 +21,10 @@ const getNotionClient = (event: RequestEventCommon): Client => {
   return notion;
 };
 
-export const getNotionUser = (event: RequestEventCommon) => {
+export const getNotionUsers = (event: RequestEventCommon) => {
   const notion = getNotionClient(event);
 
-  return notion.users.me({});
+  return notion.users.list({});
 };
 
 export const getNotionDatabase = (event: RequestEventCommon) => {
