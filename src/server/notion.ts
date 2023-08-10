@@ -1,11 +1,11 @@
-import type { RequestEventCommon } from "@builder.io/qwik-city";
+import type { RequestEventBase } from "@builder.io/qwik-city";
 import { Client } from "@notionhq/client";
 import type { QueryDatabaseParameters } from "@notionhq/client/build/src/api-endpoints";
 import { getServerEnv } from "./env";
 
 const NOTION_CACHE_KEY = "__notion";
 
-const getNotionClient = (event: RequestEventCommon): Client => {
+const getNotionClient = (event: RequestEventBase): Client => {
   const cached = event.sharedMap.get(NOTION_CACHE_KEY);
 
   if (cached) {
@@ -21,21 +21,14 @@ const getNotionClient = (event: RequestEventCommon): Client => {
   return notion;
 };
 
-export const getNotionUsers = (event: RequestEventCommon) => {
+export const getNotionUsers = (event: RequestEventBase) => {
   const notion = getNotionClient(event);
 
   return notion.users.list({});
 };
 
-export const getNotionDatabase = (event: RequestEventCommon) => {
-  const env = getServerEnv(event);
-  const notion = getNotionClient(event);
-
-  return notion.databases.retrieve({ database_id: env.notionDatabase });
-};
-
 type QueryNotionDatabaseArgs = Omit<QueryDatabaseParameters, "database_id"> & {
-  event: RequestEventCommon;
+  event: RequestEventBase;
 };
 
 export const queryNotionDatabase = ({

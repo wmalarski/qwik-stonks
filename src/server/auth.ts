@@ -1,4 +1,4 @@
-import type { RequestEventCommon } from "@builder.io/qwik-city";
+import type { RequestEventBase } from "@builder.io/qwik-city";
 import jwt from "jsonwebtoken";
 import { getServerEnv } from "./env";
 import type { Session } from "./oauth";
@@ -14,7 +14,7 @@ const options = {
 const SESSION_COOKIE_KEY = "__session";
 
 export const createCookieSession = (
-  event: RequestEventCommon,
+  event: RequestEventBase,
   session: Session,
 ) => {
   const env = getServerEnv(event);
@@ -28,11 +28,11 @@ export const createCookieSession = (
   });
 };
 
-export const deleteCookieSession = (event: RequestEventCommon) => {
+export const deleteCookieSession = (event: RequestEventBase) => {
   event.cookie.delete(SESSION_COOKIE_KEY, options);
 };
 
-const getCookieSession = (event: RequestEventCommon): Session | null => {
+const getCookieSession = (event: RequestEventBase): Session | null => {
   const token = event.cookie.get(SESSION_COOKIE_KEY)?.value;
   const env = getServerEnv(event);
 
@@ -54,7 +54,7 @@ const getCookieSession = (event: RequestEventCommon): Session | null => {
 const SESSION_CACHE_KEY = "__session";
 
 export const getRequestCookieSession = (
-  event: RequestEventCommon,
+  event: RequestEventBase,
 ): Session | null => {
   const value = event.sharedMap.get(SESSION_CACHE_KEY);
 
@@ -69,6 +69,6 @@ export const getRequestCookieSession = (
   return session;
 };
 
-export const clearRequestSession = (event: RequestEventCommon) => {
+export const clearRequestSession = (event: RequestEventBase) => {
   event.sharedMap.set(SESSION_CACHE_KEY, { session: null });
 };

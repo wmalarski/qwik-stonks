@@ -1,4 +1,4 @@
-import { z, type RequestEventCommon } from "@builder.io/qwik-city";
+import { z, type RequestEventBase } from "@builder.io/qwik-city";
 
 const ENV_CACHE_KEY = "__env";
 
@@ -16,7 +16,7 @@ const getServerEnvSchema = () => {
 };
 
 export const getServerEnv = (
-  event: RequestEventCommon,
+  event: RequestEventBase,
 ): z.infer<ReturnType<typeof getServerEnvSchema>> => {
   const cached = event.sharedMap.get(ENV_CACHE_KEY);
 

@@ -2,16 +2,21 @@ import { component$ } from "@builder.io/qwik";
 import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import auth0 from "auth0-js";
 import { Button } from "~/components/Button";
-import { getNotionUsers } from "~/server/notion";
+import { getRequestCookieSession } from "~/server/auth";
+import { paths } from "~/utils/paths";
 
-export const useNotionUsersLoader = routeLoader$(async (event) => {
-  const users = await getNotionUsers(event);
+export const usePublicLoader = routeLoader$((event) => {
+  const session = getRequestCookieSession(event);
 
-  return users;
+  if (session) {
+    throw event.redirect(302, paths.invoices);
+  }
+
+  return null;
 });
 
 export default component$(() => {
-  const notionUsers = useNotionUsersLoader();
+  usePublicLoader();
 
   return (
     <div>
@@ -29,13 +34,12 @@ export default component$(() => {
       >
         Sign In
       </Button>
-      <pre>{JSON.stringify(notionUsers.value, null, 2)}</pre>
     </div>
   );
 });
 
 export const head: DocumentHead = {
-  title: "Welcome to Qwik",
+  title: "Qwik Stonks",
   meta: [
     {
       name: "description",

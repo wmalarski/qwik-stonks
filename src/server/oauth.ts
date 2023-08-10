@@ -1,4 +1,4 @@
-import type { RequestEventCommon } from "@builder.io/qwik-city";
+import type { RequestEventBase } from "@builder.io/qwik-city";
 import { buildSearchParams } from "~/utils/searchParams";
 import { getServerEnv } from "./env";
 
@@ -24,7 +24,7 @@ export type User = {
 };
 
 type AuthFetchArgs = {
-  event: RequestEventCommon;
+  event: RequestEventBase;
   init?: RequestInit;
   path: string;
   query?: Record<string, unknown>;
@@ -58,7 +58,7 @@ export const authFetchJson = async <T>(args: AuthFetchArgs): Promise<T> => {
 
 type ExchangeAuthTokenArgs = {
   code: string;
-  event: RequestEventCommon;
+  event: RequestEventBase;
 };
 
 export const exchangeAuthToken = (args: ExchangeAuthTokenArgs) => {
@@ -82,7 +82,7 @@ export const exchangeAuthToken = (args: ExchangeAuthTokenArgs) => {
 };
 
 type GetAuthUserInfoArgs = {
-  event: RequestEventCommon;
+  event: RequestEventBase;
   session: Session;
 };
 
