@@ -1,8 +1,8 @@
 import { component$, type PropFunction } from "@builder.io/qwik";
-import type { QueryDatabaseResponse } from "@notionhq/client/build/src/api-endpoints";
+import type { Invoice, QueryInvoicesResponse } from "~/server/invoices";
 
 type InvoiceListItemProps = {
-  invoice: QueryDatabaseResponse["results"][0];
+  invoice: Invoice;
 };
 
 export const InvoiceListItem = component$<InvoiceListItemProps>((props) => {
@@ -14,7 +14,7 @@ export const InvoiceListItem = component$<InvoiceListItemProps>((props) => {
 });
 
 type InvoicesListProps = {
-  invoices: QueryDatabaseResponse;
+  invoices: QueryInvoicesResponse;
   onMoreClick$: PropFunction<(cursor: string) => void>;
 };
 
