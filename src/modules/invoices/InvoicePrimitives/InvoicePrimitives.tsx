@@ -1,6 +1,18 @@
 import { component$, type PropFunction } from "@builder.io/qwik";
 import type { Invoice, QueryInvoicesResponse } from "~/server/invoices";
 
+type InvoiceDetailsProps = {
+  invoice: Invoice;
+};
+
+export const InvoiceDetails = component$<InvoiceDetailsProps>((props) => {
+  // if (props.invoice.object !== "database") {
+  //   return null;
+  // }
+
+  return <pre>{JSON.stringify(props.invoice, null, 2)}</pre>;
+});
+
 type InvoiceListItemProps = {
   invoice: Invoice;
 };
