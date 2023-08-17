@@ -117,16 +117,11 @@ export const queryInvoice = async ({ event, id }: QueryInvoiceArgs) => {
     filter: { property: "ID", number: { equals: id } },
   });
 
-  const results: Invoice[] = [];
+  const result = response.results.at(0);
 
-  response.results.forEach((entry) => {
-    const invoice = databaseResponseToInvoice(entry);
-    if (invoice) {
-      results.push(invoice);
-    }
-  });
+  if (!result) {
+    return null;
+  }
 
-  return { ...response, results };
+  return databaseResponseToInvoice(result);
 };
-
-export type QueryInvoiceResponse = Awaited<ReturnType<typeof queryInvoice>>;
