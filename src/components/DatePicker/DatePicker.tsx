@@ -1,104 +1,131 @@
-import { cva } from "~/styled-system/css";
-import { styled } from "~/styled-system/jsx";
+import { useI18n } from "@solid-primitives/i18n";
+import { For, Match, Switch, type Component } from "solid-js";
+import { Option, Select, type SelectProps } from "../Select";
 
-const datePickerVariants = cva({
-  base: {
-    display: "inline-flex",
-    flexShrink: 0,
-    cursor: "pointer",
-    userSelect: "none",
-    flexWrap: "wrap",
-    alignItems: "center",
-    justifyContent: "center",
-    borderColor: ["transparent", "base.200"],
-    textAlign: "center",
-    borderRadius: "sm",
-    height: "3rem",
-    paddingLeft: "1rem",
-    paddingRight: "1rem",
-    fontSize: ".875rem",
-    lineHeight: ["1.25rem", "1em"],
-    minHeight: "3rem",
-    gap: ".5rem",
-    fontWeight: 600,
-    textDecorationLine: "none",
-    borderWidth: "thin",
+type DateSelectOption = {
+  value: number;
+  text: string;
+};
 
-    outlineColor: "base.content",
+type DateSelectProps = {
+  isDisabled: boolean;
+  onChange: (value: number) => void;
+  options: DateSelectOption[];
+  value: number;
+};
 
-    _focusVisible: {
-      outlineStyle: "solid",
-      outlineWidth: "2px",
-      outlineOffset: "2px",
-    },
+const DateSelect: Component<DateSelectProps> = (props) => {
+  const onChange: SelectProps["onChange"] = (event) => {
+    props.onChange(Number(event.target.value));
+  };
 
-    _disabled: {
-      opacity: 0.5,
-      pointerEvents: "none",
-    },
-  },
-  variants: {
-    variant: {
-      default: {
-        backgroundColor: "base.200",
-        color: "base.content",
-        _hover: {
-          borderColor: "base.300",
-          backgroundColor: "base.300",
-        },
-      },
-      neutral: {
-        borderColor: "neutral",
-        backgroundColor: "neutral",
-        color: "neutral.content",
-        outlineColor: "neutral",
-        _hover: {
-          borderColor: "neutral.focus",
-          backgroundColor: "neutral.focus",
-        },
-      },
-      primary: {
-        borderColor: "primary",
-        backgroundColor: "primary",
-        color: "primary.content",
-        outlineColor: "primary",
-        _hover: {
-          borderColor: "primary.focus",
-          backgroundColor: "primary.focus",
-        },
-      },
-      secondary: {
-        borderColor: "secondary",
-        backgroundColor: "secondary",
-        color: "secondary.content",
-        outlineColor: "secondary",
-        _hover: {
-          borderColor: "secondary.focus",
-          backgroundColor: "secondary.focus",
-        },
-      },
-      accent: {
-        borderColor: "accent",
-        backgroundColor: "accent",
-        color: "accent.content",
-        outlineColor: "accent",
-        _hover: {
-          borderColor: "accent.focus",
-          backgroundColor: "accent.focus",
-        },
-      },
-    },
-    size: {
-      default: { height: "10", px: "4", py: "2" },
-      sm: { height: "9", borderRadius: "md", px: "3" },
-      lg: { height: "11", borderRadius: "md", px: "8" },
-      icon: { height: "10", width: "10" },
-    },
-  },
-  defaultVariants: {
-    variant: "default",
-    size: "default",
-  },
-});
+  return (
+    <Select
+      disabled={props.isDisabled}
+      onChange={onChange}
+      size="sm"
+      value={props.value}
+      variant="bordered"
+    >
+      <For each={props.options}>
+        {(option) => <Option value={option.value}>{option.text}</Option>}
+      </For>
+    </Select>
+  );
+};
 
-export const DatePicker = styled("input", datePickerVariants);
+export type DatePickerProps = {
+  isDisabled: boolean;
+  id: string;
+  value: Date;
+  onChange: (value: Date) => void;
+};
+
+export const DatePicker: Component<DatePickerProps> = (props) => {
+  const [, { locale }] = useI18n();
+
+  const months = () => {
+    const formatter = Intl.DateTimeFormat(locale(), { month: "long" });
+    return new Array(12).fill(0).map((_, index) => ({
+      text: formatter.format(new Date(0, index, 1)),
+      value: index,
+    }));
+  };
+
+  const days = () => {
+    const month = props.value.getMonth();
+    const daysInMonth = new Date(0, month + 1, 0).getDate();
+    const formatter = Intl.DateTimeFormat(locale(), { day: "2-digit" });
+    return new Array(daysInMonth).fill(0).map((_, index) => ({
+      text: formatter.format(new Date(0, month, index + 1)),
+      value: index + 1,
+    }));
+  };
+
+  const years = () => {
+    const formatter = new Intl.DateTimeFormat(locale(), { year: "numeric" });
+    return new Array(10).fill(2020).map((value, index) => ({
+      text: formatter.format(new Date(value + index, 0, 1)),
+      value: value + index,
+    }));
+  };
+
+  const onDayChange = (day: number) => {
+    const next = new Date(props.value);
+    next.setDate(day);
+    props.onChange(next);
+  };
+
+  const onMonthChange = (month: number) => {
+    const next = new Date(props.value);
+    next.setMonth(month);
+    while (next.getMonth() !== month) {
+      next.setDate(next.getDate() - 1);
+    }
+    props.onChange(next);
+  };
+
+  const onYearChange = (year: number) => {
+    const next = new Date(props.value);
+    next.setFullYear(year);
+    props.onChange(next);
+  };
+
+  return (
+    <div id={props.id} class="flex">
+      <For each={new Intl.DateTimeFormat(locale()).formatToParts(props.value)}>
+        {(part) => (
+          <Switch>
+            <Match when={part.type === "day"}>
+              <DateSelect
+                isDisabled={props.isDisabled}
+                onChange={onDayChange}
+                options={days()}
+                value={props.value.getDate()}
+              />
+            </Match>
+            <Match when={part.type === "literal"}>
+              <span>{part.value}</span>
+            </Match>
+            <Match when={part.type === "month"}>
+              <DateSelect
+                isDisabled={props.isDisabled}
+                onChange={onMonthChange}
+                options={months()}
+                value={props.value.getMonth()}
+              />
+            </Match>
+            <Match when={part.type === "year"}>
+              <DateSelect
+                isDisabled={props.isDisabled}
+                onChange={onYearChange}
+                options={years()}
+                value={Number(part.value)}
+              />
+            </Match>
+          </Switch>
+        )}
+      </For>
+    </div>
+  );
+};

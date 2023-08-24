@@ -26,6 +26,7 @@
     "@builder.io/qwik-city": "^1.2.6",
     "@builder.io/vite-plugin-macro": "~0.0.7",
     "@pandacss/dev": "^0.4.0",
+    "@qwik-ui/headless": "^0.1.13",
     "@types/auth0-js": "^9.21.0",
     "@types/eslint": "8.40.2",
     "@types/jsonwebtoken": "^9.0.2",
